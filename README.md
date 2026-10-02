@@ -1,6 +1,6 @@
 # Rossmann Store Sales Forecasting
 
-An end-to-end sales forecasting project using the Rossmann Store Sales dataset. The analysis selects the highest-sales 20% of stores, explores the factors associated with daily sales, and evaluates a simple forecasting model on a chronological 28-day holdout period.
+A sales forecasting project using the Rossmann Store Sales dataset. The analysis selects the highest-sales 20% of stores and compares seven forecasting procedures through chronological evaluation.
 
 This portfolio version contains the complete analysis, model comparison, conclusions and reproducibility instructions.
 
@@ -8,13 +8,15 @@ This portfolio version contains the complete analysis, model comparison, conclus
 
 - Analysed 1,017,209 store-day records from 1,115 stores.
 - Selected 223 high-sales stores, representing 30.5% of observed sales during the ranking period.
-- Compared a weekday-mean baseline with multiple linear regression.
-- Reduced held-out daily MAE from 264,217 to 109,611 sales units, a 58.5% improvement.
+- Compared weekday baseline, linear regression, trend regression, fixed Ridge, tuned Ridge, decision tree and random forest.
+- Reduced July daily MAE from 264,217 to 109,611 sales units using original regression, a 58.5% improvement.
 - Forecast 57.33 million sales units against 56.54 million actual units over four weeks, a 1.40% overforecast.
+- Random forest achieved mean MAE of 160,118 across three primary development windows, 0.95% below Trend and 2.52% below Regression.
+- Forest holiday MAE was 48,195 across four development holiday dates, with no negative forecasts across six inspected windows.
 
 ## Conclusions
 
-Multiple linear regression provided the stronger short-term planning reference for the selected stores in the July 2015 evaluation window. It substantially reduced daily forecast error relative to the weekday baseline, while keeping the four-week total close to actual sales.
+Random forest ranks first under the stated three-window development MAE rule. Its advantage is small: Trend has lower mean RMSE and absolute four-week total error, while original regression has lower July MAE (109,611 versus Forest's 138,087). All inspected periods have influenced development; no fresh independent final test is claimed. Retain Trend and Regression as references and validate fixed specifications on genuinely unseen seasons and holidays.
 
 Promotions, opening coverage and weekday patterns were associated with daily sales, but these observational relationships should not be interpreted as causal effects. The model is most useful as a transparent benchmark for revenue planning. It still requires testing on later chronological periods, especially periods containing public holidays, before operational use.
 
@@ -25,9 +27,11 @@ Promotions, opening coverage and weekday patterns were associated with daily sal
 3. Descriptive statistics and exploratory visualisations
 4. Analysis of weekday, promotion, opening and holiday patterns
 5. Chronological train-test split
-6. Baseline and linear-regression forecasts
+6. Seven forecasting procedures and bounded Ridge/tree tuning
 7. MAE, RMSE, R-squared and total-error comparison
-8. Model limitations and proposed next steps
+8. Holiday diagnosis and non-negative sensitivity checks
+9. Decision-tree interpretation, depth diagnostics and random forest comparison
+10. Complete per-store statistics, model limitations and next steps
 
 ## Repository structure
 
@@ -56,11 +60,11 @@ python -m pip install -r requirements.txt
 
 ## Tools
 
-Python, Pandas, Matplotlib and scikit-learn.
+Python, NumPy, Pandas, Matplotlib and scikit-learn. The correlation chart is self-contained and requires no course-specific helper.
 
 ## Scope and limitations
 
-The evaluation covers one 28-day period and contains no public holidays. The linear model also produces several negative fitted values on public-holiday dates in the training period. Results are therefore suitable as a transparent forecasting exercise, rather than an operational forecasting system.
+Six 28-day periods are inspected, including July and five earlier historical windows. The July window contains no public holidays. Regression can produce negative holiday forecasts; the forest improves the four-date development holiday check, but that sample cannot establish future reliability. Advance opening and promotion schedules are assumed. These aggregate forecasts cannot establish exact stock, staffing or profit gains.
 
 ## Data source
 
