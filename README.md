@@ -1,71 +1,54 @@
 # Rossmann Store Sales Forecasting
 
-A sales forecasting project using the Rossmann Store Sales dataset. The analysis selects the highest-sales 20% of stores and compares seven forecasting procedures through chronological evaluation.
-
-This portfolio version contains the complete analysis, model comparison, conclusions and reproducibility instructions.
+A reproducible portfolio analysis of 28-day sales forecasts for the highest-sales 20% of Rossmann stores. Eight models are compared across six chronological forecast periods, with separate checks for daily accuracy, four-week totals and public holidays.
 
 ## Key results
 
-- Analysed 1,017,209 store-day records from 1,115 stores.
-- Selected 223 high-sales stores, representing 30.5% of observed sales during the ranking period.
-- Compared weekday baseline, linear regression, trend regression, fixed Ridge, tuned Ridge, decision tree and random forest.
-- Reduced July daily MAE from 264,217 to 109,611 sales units using original regression, a 58.5% improvement.
-- Forecast 57.33 million sales units against 56.54 million actual units over four weeks, a 1.40% overforecast.
-- Random forest achieved mean MAE of 160,118 across three primary development windows, 0.95% below Trend and 2.52% below Regression.
-- Forest holiday MAE was 48,195 across four development holiday dates, with no negative forecasts across six inspected windows.
+- Checked 1,017,209 store-day records from 1,115 stores.
+- Selected 223 stores using 1 January-3 July 2015 sales, accounting for 30.5% of sales in that ranking period.
+- Compared weekday Baseline, Regression, Trend, fixed Ridge, tuned Ridge, tuned Tree, fixed Forest and tuned KNN.
+- KNN ranks first by mean daily MAE across the three main comparison periods: 149,857 sales units, 6.41% below Forest's 160,118.
+- July Regression MAE is 109,611 versus Baseline's 264,217, a 58.5% reduction. Its four-week forecast is 57.33 million against 56.54 million actual sales, a 1.40% overforecast.
+- Forest has the lowest four-holiday MAE, 48,195, versus KNN's 115,932. Only four holidays contribute to this comparison.
 
-## Conclusions
+## Interpretation and limitations
 
-Random forest ranks first under the stated three-window development MAE rule. Its advantage is small: Trend has lower mean RMSE and absolute four-week total error, while original regression has lower July MAE (109,611 versus Forest's 138,087). All inspected periods have influenced development; no fresh independent final test is claimed. Retain Trend and Regression as references and validate fixed specifications on genuinely unseen seasons and holidays.
+No model leads on every measure. KNN wins the main daily-MAE comparison, Forest performs better in both earlier checks and on the four assessed holidays, and Regression has lower July MAE. Trend has lower mean RMSE and mean absolute four-week total percentage error than KNN and Forest across the three main comparison periods.
 
-Promotions, opening coverage and weekday patterns were associated with daily sales, but these observational relationships should not be interpreted as causal effects. The model is most useful as a transparent benchmark for revenue planning. It still requires testing on later chronological periods, especially periods containing public holidays, before operational use.
+KNN and Forest underforecast four-week totals in all six examined periods. Their mean absolute total errors across the three main comparison periods are 5.68% and 4.87%, compared with Trend's 2.10%. Daily accuracy and budget-total accuracy therefore require separate evaluation.
 
-## What the notebook covers
+All six periods have been examined during development; none is an untouched final test. The training histories overlap, the seasonal coverage is limited, and opening and promotion schedules are assumed available in advance. Relationships and impurity importance do not establish causal effects. The results identify candidates for fresh chronological validation before operational use.
 
-1. Data-quality checks and type standardisation
-2. Selection of the highest-sales 20% of stores
-3. Descriptive statistics and exploratory visualisations
-4. Analysis of weekday, promotion, opening and holiday patterns
-5. Chronological train-test split
-6. Seven forecasting procedures and bounded Ridge/tree tuning
-7. MAE, RMSE, R-squared and total-error comparison
-8. Holiday diagnosis and non-negative sensitivity checks
-9. Decision-tree interpretation, depth diagnostics and random forest comparison
-10. Complete per-store statistics, model limitations and next steps
+## Notebook contents
 
-## Repository structure
+1. Data validation, cleaning and store selection
+2. Per-store and pooled descriptive statistics
+3. Time series, 28-day rolling mean, promotion comparisons and correlations
+4. Calendar and store-count feature construction
+5. Chronological evaluation and nested earlier-period tuning
+6. Full eight-model comparison, daily errors and four-week total errors
+7. Holiday diagnosis, tree paths and KNN neighbours
+8. Training-error diagnostics, Forest settings and seed sensitivity
+9. Limitations, future validation and complete per-store statistics
 
-```text
-rossmann-sales-forecasting/
-├── rossmann_sales_forecasting.ipynb
-├── data/
-│   └── README.md
-├── requirements.txt
-└── README.md
-```
-
-The notebook is saved with its outputs, so the analysis and charts can be reviewed directly on GitHub.
+The notebook is saved with its tables and charts for review without rerunning it. Smaller model subsets remain as explicitly labelled supporting comparisons.
 
 ## Run locally
 
+Use Python 3.13, matching the tested environment. The numerical dependencies are pinned because KNN equal-distance neighbour selection can be sensitive to implementation and floating-point differences.
+
 1. Download `train.csv` from the [Rossmann Store Sales competition](https://www.kaggle.com/c/rossmann-store-sales/data).
 2. Save it as `data/raw/Rossmann_train.csv`, or gzip it as `data/raw/Rossmann_train.csv.gz`.
-3. Install the dependencies:
+3. Install the environment:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-4. Open `rossmann_sales_forecasting.ipynb` and run all cells in order.
+4. Open `rossmann_sales_forecasting.ipynb` from the repository root and run all cells in order.
 
-## Tools
+Only the training dataset is used. The data are not redistributed in this repository; obtain them from the original source under its applicable terms. No course-specific plotting helper is required.
 
-Python, NumPy, Pandas, Matplotlib and scikit-learn. The correlation chart is self-contained and requires no course-specific helper.
+## Provenance
 
-## Scope and limitations
-
-Six 28-day periods are inspected, including July and five earlier historical windows. The July window contains no public holidays. Regression can produce negative holiday forecasts; the forest improves the four-date development holiday check, but that sample cannot establish future reliability. Advance opening and promotion schedules are assumed. These aggregate forecasts cannot establish exact stock, staffing or profit gains.
-
-## Data source
-
-Kaggle, [Rossmann Store Sales](https://www.kaggle.com/c/rossmann-store-sales/data). The dataset is not redistributed in this public portfolio repository; users should obtain it from the original source under Kaggle's applicable terms.
+This is a personal portfolio adaptation of a collaborative coursework analysis. The original analysis was jointly developed; this repository does not claim sole authorship of that work. Personal identifiers and submission administration have been omitted. Method and dataset sources are retained in the notebook references.
